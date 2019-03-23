@@ -33,10 +33,15 @@ def main():
 
     screen = setup_initial_screen(width, height)
 
-    background = create_surface(screen.get_size(), 255, 0, 0)
-    foreground = create_surface(screen.get_size(), 0, 255, 0)
+    background = create_surface(screen.get_size(), 255, 255, 255)
+    ballscreen = create_surface((50, 50), 255, 255, 255)
+    pygame.draw.circle(ballscreen, (0, 0, 255), (25, 25), 25)
+    ballscreen = ballscreen.convert()
+
+    pygame.draw.rect(background, (0, 255, 0), (50, 50, 100, 25), 5)
+
     screen.blit(background, (0, 0))
-    screen.blit(foreground, (0, height/2))
+    screen.blit(ballscreen, (320, 240))
 
     running = True
     FPS = 60
