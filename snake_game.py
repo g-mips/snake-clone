@@ -2,6 +2,7 @@ import pygame
 import sys
 import getopt
 import random
+import copy
 
 from colors import *
 import player
@@ -39,10 +40,10 @@ def create_random_prize(background):
     y = random.randrange(border_dist + 1,
         height - (border_dist + 1) - prize_width)
 
-    return pygame.draw.rect(background, BLACK,
+    return pygame.draw.rect(background, RED,
         (x, y, prize_width, prize_height), 2)
 
-def event_handler(plyr):
+def event_handler(snake_head):
     '''
     Handles events. Returns 'False' if an end the game event occurred
     '''
@@ -53,7 +54,7 @@ def event_handler(plyr):
             if event.key == pygame.K_ESCAPE:
                 return False
 
-        player.check_snake_events(plyr, event)
+        player.check_snake_events(snake_head, event)
 
     return True
 
@@ -71,17 +72,18 @@ def main(width, height):
 
     # Setup clock
     clock = pygame.time.Clock()
-    FPS = 120
+    FPS = 10
 
     # Setup screen and objects
     main_screen = pygame.display.set_mode((width, height))
-    plyr = player.Player(main_screen)
+    snake_head = player.SnakeHead(main_screen)
     borders = setup_borders(main_screen)
     prize = create_random_prize(main_screen)
 
     # Main loop
     running = True
     playtime = 0.0
+    snake_parts = []
     while running:
         milliseconds = clock.tick(FPS)
         playtime += milliseconds / 1000.0
@@ -92,25 +94,56 @@ def main(width, height):
         pygame.display.set_caption(text)
 
         # Run through all the events
-        running = event_handler(plyr)
+        running = event_handler(snake_head)
 
         if running:
-            # Update the screen
+            # Clear the screen
             main_screen.fill(WHITE)
 
-            player.update_snake(plyr, main_screen)
+            # Update the snake head
+            player.update_snake_head(snake_head, main_screen)
+
+            # Update the snake body
+            prev_snake = snake_head.snake_part
+            for snake_part in snake_parts:
+                player.update_snake_body(snake_part, prev_snake, main_screen)
+                prev_snake = snake_part.snake_part
+
+            # Draw the borders
             borders = setup_borders(main_screen)
-            pygame.draw.rect(main_screen, BLACK, prize, 2)
+
+            # Draw the prize
+            pygame.draw.rect(main_screen, RED, prize, 2)
+
+            # Update the screen
             pygame.display.update()
 
             # Test to see if the snake ran into a border
             for border in borders:
-                if plyr.snake.colliderect(border):
+                if snake_head.snake_part.colliderect(border):
                     running = False
                     break
 
-            if running and plyr.snake.colliderect(prize):
+            # Test to see if the snake head ran into the snake body
+            if running:
+                for snake_part in snake_parts:
+                    if snake_part.on_screen and \
+                        snake_head.snake_part.colliderect(
+                            snake_part.snake_part):
+                        running = False
+                        break
+
+            # Test to see if the snake head collected a prize
+            if running and snake_head.snake_part.colliderect(prize):
                 prize = create_random_prize(main_screen)
+                x = snake_head.snake_part.x
+                y = snake_head.snake_part.y
+
+                if len(snake_parts) > 0:
+                    x = snake_parts[len(snake_parts) - 1].snake_part.x
+                    y = snake_parts[len(snake_parts) - 1].snake_part.y
+
+                snake_parts.append(player.SnakeBody(main_screen, x, y))
 
     pygame.quit()
 
