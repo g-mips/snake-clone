@@ -1,46 +1,44 @@
 import pygame
 
-current_direction = pygame.K_RIGHT
+class Player():
+    def __init__(self, background, x=50, y=50):
+        self.cur_dir = pygame.K_RIGHT
 
-def check_snake_events(event):
+        self.snake = setup_snake(background, x, y)
+
+def check_snake_events(player, event):
     '''
     Check all the player (snake) events that could happen
     '''
-    global current_direction
-
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_UP:
-            current_direction = event.key
+            player.cur_dir = event.key
         elif event.key == pygame.K_DOWN:
-            current_direction = event.key
+            player.cur_dir = event.key
         elif event.key == pygame.K_RIGHT:
-            current_direction = event.key
+            player.cur_dir = event.key
         elif event.key == pygame.K_LEFT:
-            current_direction = event.key
+            player.cur_dir = event.key
 
-def setup_snake(background):
+def setup_snake(background, initial_x, initial_y):
     '''
     Setup the initial state of the player (snake)
     '''
-    global current_direction
-
-    initial_x = 50
-    initial_y = 50
-
     return pygame.draw.rect(background, (0, 0, 0),
             (initial_x, initial_y, 20, 20), 2)
 
-def update_snake(snake, background):
-    global player_keys
-
-    if current_direction == pygame.K_LEFT:
-        snake.move_ip(-1, 0)
-    elif current_direction == pygame.K_RIGHT:
-        snake.move_ip(1, 0)
-    elif current_direction == pygame.K_DOWN:
-        snake.move_ip(0, 1)
-    elif current_direction == pygame.K_UP:
-        snake.move_ip(0, -1)
+def update_snake(player, background):
+    '''
+    Update the state of the snake
+    '''
+    if player.cur_dir == pygame.K_LEFT:
+        player.snake.move_ip(-1, 0)
+    elif player.cur_dir == pygame.K_RIGHT:
+        player.snake.move_ip(1, 0)
+    elif player.cur_dir == pygame.K_DOWN:
+        player.snake.move_ip(0, 1)
+    elif player.cur_dir == pygame.K_UP:
+        player.snake.move_ip(0, -1)
 
     pygame.draw.rect(background, (0, 0, 0),
-            snake, 2)
+            player.snake, 2)

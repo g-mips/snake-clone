@@ -5,11 +5,14 @@ import getopt
 import player
 
 def setup_initial_screen(width, height):
+    '''
+    Create the initial screen
+    '''
     screen = pygame.display.set_mode((width, height))
 
     return screen
 
-def event_handler():
+def event_handler(plyr):
     '''
     Handles events. Returns 'False' if an end the game event occurred
     '''
@@ -21,13 +24,17 @@ def event_handler():
             if event.key == pygame.K_ESCAPE:
                 return False
 
-        player.check_snake_events(event)
+        player.check_snake_events(plyr, event)
 
     return True
 
 def create_surface(size, red, green, blue):
+    '''
+    Create a surface in an initial state
+    '''
     surface = pygame.Surface(size)
     surface.fill((red, green, blue))
+
     return surface.convert()
 
 def main(width, height):
@@ -36,49 +43,25 @@ def main(width, height):
     FPS = 60
 
     main_screen = pygame.display.set_mode((width, height))
-    snake = player.setup_snake(main_screen)
+    plyr = player.Player(main_screen) #player.setup_snake(main_screen)
 
     running = True
-    while running:
-        if not event_handler():
-            running = False
-
-        main_screen.fill((255, 255, 255))
-
-        player.update_snake(snake, main_screen)
-        pygame.display.update()
-
-        clock.tick(FPS)
-
-    pygame.quit()
-
-def test(width, height):
-    pygame.init()
-    clock = pygame.time.Clock()
-
-    screen = setup_initial_screen(width, height)
-
-    background = create_surface(screen.get_size(), 255, 255, 255)
-    ballsurface = create_surface((50, 50), 255, 255, 255)
-    pygame.draw.circle(ballsurface, (0, 0, 255), (25, 25), 25)
-
-    pygame.draw.rect(background, (0, 255, 0), (50, 50, 100, 25), 5)
-
-    screen.blit(background, (0, 0))
-    screen.blit(ballsurface, (320, 240))
-
-    running = True
-    FPS = 60
     playtime = 0.0
     while running:
         milliseconds = clock.tick(FPS)
         playtime += milliseconds / 1000.0
-        if not event_handler():
+
+        text = "FPS: {0:.2f} Playtime: {1:.2f}".format(
+            clock.get_fps(), playtime)
+        pygame.display.set_caption(text)
+
+        if not event_handler(plyr):
             running = False
 
-        text = "FPS: {0:.2f} Playtime: {1:.2f}".format(clock.get_fps(), playtime)
-        pygame.display.set_caption(text)
-        pygame.display.flip()
+        main_screen.fill((255, 255, 255))
+
+        player.update_snake(plyr, main_screen)
+        pygame.display.update()
 
     pygame.quit()
 
