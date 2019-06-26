@@ -6,6 +6,8 @@ import random
 from colors import *
 import player
 
+border_dist = 5
+
 def setup_borders(background):
     '''
     This returns an array of lines. Each line is setup separately because
@@ -14,31 +16,31 @@ def setup_borders(background):
     '''
     width, height = background.get_size()
 
-    line_1_start = (5, 5)
-    line_2_start = (5, height - 5)
-    line_3_start = (width - 5, height - 5)
-    line_4_start = (width - 5, 5)
+    line_1_start = (border_dist, border_dist)
+    line_2_start = (border_dist, height - border_dist)
+    line_3_start = (width - border_dist, height - border_dist)
+    line_4_start = (width - border_dist, border_dist)
 
-    return [pygame.draw.line(background, WHITE, line_1_start, line_2_start, 5),
-        pygame.draw.line(background, WHITE, line_2_start, line_3_start, 5),
-        pygame.draw.line(background, WHITE, line_3_start, line_4_start, 5),
-        pygame.draw.line(background, WHITE, line_4_start, line_1_start, 5)]
+    return [pygame.draw.line(background, BLACK, line_1_start, line_2_start, 5),
+        pygame.draw.line(background, BLACK, line_2_start, line_3_start, 5),
+        pygame.draw.line(background, BLACK, line_3_start, line_4_start, 5),
+        pygame.draw.line(background, BLACK, line_4_start, line_1_start, 5)]
 
 def create_random_prize(background):
+    '''
+    Create a prize in a random spot within the background given
+    '''
     width, height = background.get_size()
 
-    x = random.randrange(6, width - 6 - 20)
-    y = random.randrange(6, height - 6 - 20)
+    prize_width = 20
+    prize_height = 20
+    x = random.randrange(border_dist + 1,
+        width - (border_dist + 1) - prize_width)
+    y = random.randrange(border_dist + 1,
+        height - (border_dist + 1) - prize_width)
 
-    return pygame.draw.rect(background, WHITE, (x, y, 20, 20), 2)
-
-def setup_initial_screen(width, height):
-    '''
-    Create the initial screen
-    '''
-    screen = pygame.display.set_mode((width, height))
-
-    return screen
+    return pygame.draw.rect(background, BLACK,
+        (x, y, prize_width, prize_height), 2)
 
 def event_handler(plyr):
     '''
@@ -92,22 +94,23 @@ def main(width, height):
         # Run through all the events
         running = event_handler(plyr)
 
-        # Update the screen
-        main_screen.fill(BLACK)
+        if running:
+            # Update the screen
+            main_screen.fill(WHITE)
 
-        player.update_snake(plyr, main_screen)
-        borders = setup_borders(main_screen)
-        pygame.draw.rect(main_screen, WHITE, prize, 2)
-        pygame.display.update()
+            player.update_snake(plyr, main_screen)
+            borders = setup_borders(main_screen)
+            pygame.draw.rect(main_screen, BLACK, prize, 2)
+            pygame.display.update()
 
-        # Test to see if the snake ran into a border
-        for border in borders:
-            if plyr.snake.colliderect(border):
-                running = False
-                break
+            # Test to see if the snake ran into a border
+            for border in borders:
+                if plyr.snake.colliderect(border):
+                    running = False
+                    break
 
-        if plyr.snake.colliderect(prize):
-            prize = create_random_prize(main_screen)
+            if running and plyr.snake.colliderect(prize):
+                prize = create_random_prize(main_screen)
 
     pygame.quit()
 

@@ -6,7 +6,7 @@ class Player():
     def __init__(self, background, x=50, y=50):
         self.cur_dir = pygame.K_RIGHT
 
-        self.snake = pygame.draw.rect(background, WHITE,
+        self.snake = pygame.draw.rect(background, BLACK,
             (x, y, 20, 20), 2)
 
 def check_snake_events(plyr, event):
@@ -36,5 +36,5 @@ def update_snake(plyr, background):
     elif plyr.cur_dir == pygame.K_UP:
         plyr.snake.move_ip(0, -1)
 
-    pygame.draw.rect(background, WHITE,
+    pygame.draw.rect(background, BLACK,
         plyr.snake, 2)
