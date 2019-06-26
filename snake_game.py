@@ -32,6 +32,8 @@ def create_surface(size, red, green, blue):
 
 def main(width, height):
     pygame.init()
+    clock = pygame.time.Clock()
+    FPS = 60
 
     main_screen = pygame.display.set_mode((width, height))
     snake = player.setup_snake(main_screen)
@@ -45,6 +47,8 @@ def main(width, height):
 
         player.update_snake(snake, main_screen)
         pygame.display.update()
+
+        clock.tick(FPS)
 
     pygame.quit()
 
