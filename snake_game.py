@@ -2,18 +2,7 @@ import pygame
 import sys
 import getopt
 
-snake = None
-
-def setup_snake(background):
-    initial_x = 50
-    initial_y = 50
-
-    return pygame.draw.rect(background, (0, 0, 0),
-            (initial_x, initial_y, 20, 20), 2)
-
-def update_snake(background):
-    pygame.draw.rect(background, (0, 0, 0),
-            snake, 2)
+import player
 
 def setup_initial_screen(width, height):
     screen = pygame.display.set_mode((width, height))
@@ -24,7 +13,6 @@ def event_handler():
     '''
     Handles events. Returns 'False' if an end the game event occurred
     '''
-    global snake
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -32,14 +20,8 @@ def event_handler():
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 return False
-            elif event.key == pygame.K_UP:
-                snake.move_ip(0, -5)
-            elif event.key == pygame.K_DOWN:
-                snake.move_ip(0, 5)
-            elif event.key == pygame.K_RIGHT:
-                snake.move_ip(5, 0)
-            elif event.key == pygame.K_LEFT:
-                snake.move_ip(-5, 0)
+
+        player.check_snake_events(event)
 
     return True
 
@@ -49,14 +31,10 @@ def create_surface(size, red, green, blue):
     return surface.convert()
 
 def main(width, height):
-    global snake
     pygame.init()
 
     main_screen = pygame.display.set_mode((width, height))
-
-    snake = setup_snake(main_screen)
-
-    main_screen.blit(main_screen, (0, 0))
+    snake = player.setup_snake(main_screen)
 
     running = True
     while running:
@@ -65,7 +43,7 @@ def main(width, height):
 
         main_screen.fill((255, 255, 255))
 
-        update_snake(main_screen)
+        player.update_snake(snake, main_screen)
         pygame.display.update()
 
     pygame.quit()
