@@ -1,22 +1,36 @@
 import pygame
 import sys
 import getopt
+import random
 
 from colors import *
 import player
 
-def setup_borders(screen):
-    width, height = screen.get_size()
+def setup_borders(background):
+    '''
+    This returns an array of lines. Each line is setup separately because
+    collision detection doesn't work properly as the player is always in
+    the "rect" otherwise.
+    '''
+    width, height = background.get_size()
 
     line_1_start = (5, 5)
     line_2_start = (5, height - 5)
     line_3_start = (width - 5, height - 5)
     line_4_start = (width - 5, 5)
 
-    return [pygame.draw.line(screen, WHITE, line_1_start, line_2_start, 5),
-        pygame.draw.line(screen, WHITE, line_2_start, line_3_start, 5),
-        pygame.draw.line(screen, WHITE, line_3_start, line_4_start, 5),
-        pygame.draw.line(screen, WHITE, line_4_start, line_1_start, 5)]
+    return [pygame.draw.line(background, WHITE, line_1_start, line_2_start, 5),
+        pygame.draw.line(background, WHITE, line_2_start, line_3_start, 5),
+        pygame.draw.line(background, WHITE, line_3_start, line_4_start, 5),
+        pygame.draw.line(background, WHITE, line_4_start, line_1_start, 5)]
+
+def create_random_prize(background):
+    width, height = background.get_size()
+
+    x = random.randrange(6, width - 6 - 20)
+    y = random.randrange(6, height - 6 - 20)
+
+    return pygame.draw.rect(background, WHITE, (x, y, 20, 20), 2)
 
 def setup_initial_screen(width, height):
     '''
@@ -30,7 +44,6 @@ def event_handler(plyr):
     '''
     Handles events. Returns 'False' if an end the game event occurred
     '''
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False
@@ -51,13 +64,6 @@ def create_surface(size, red, green, blue):
 
     return surface.convert()
 
-def collision_test(plyr, borders):
-    for border in borders:
-        if plyr.snake.colliderect(border):
-            return True
-
-    return False
-
 def main(width, height):
     pygame.init()
 
@@ -69,6 +75,7 @@ def main(width, height):
     main_screen = pygame.display.set_mode((width, height))
     plyr = player.Player(main_screen)
     borders = setup_borders(main_screen)
+    prize = create_random_prize(main_screen)
 
     # Main loop
     running = True
@@ -82,16 +89,25 @@ def main(width, height):
             clock.get_fps(), playtime)
         pygame.display.set_caption(text)
 
+        # Run through all the events
         running = event_handler(plyr)
 
+        # Update the screen
         main_screen.fill(BLACK)
 
         player.update_snake(plyr, main_screen)
         borders = setup_borders(main_screen)
+        pygame.draw.rect(main_screen, WHITE, prize, 2)
         pygame.display.update()
 
-        if collision_test(plyr, borders):
-            running = False
+        # Test to see if the snake ran into a border
+        for border in borders:
+            if plyr.snake.colliderect(border):
+                running = False
+                break
+
+        if plyr.snake.colliderect(prize):
+            prize = create_random_prize(main_screen)
 
     pygame.quit()
 
@@ -104,7 +120,8 @@ if __name__ == "__main__":
 
     if len(sys.argv) != 1:
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "hW:H:", ["help", "width=", "height="])
+            opts, args = getopt.getopt(sys.argv[1:], "hW:H:",
+                ["help", "width=", "height="])
         except getopt.GetoptError:
             usage()
             sys.exit(1)
@@ -117,5 +134,7 @@ if __name__ == "__main__":
                 width = arg
             elif opt in ('-H', '--height'):
                 height = arg
+
+    random.seed()
 
     main(width, height)
