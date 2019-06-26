@@ -43,7 +43,7 @@ def main(width, height):
     FPS = 60
 
     main_screen = pygame.display.set_mode((width, height))
-    plyr = player.Player(main_screen) #player.setup_snake(main_screen)
+    plyr = player.Player(main_screen)
 
     running = True
     playtime = 0.0

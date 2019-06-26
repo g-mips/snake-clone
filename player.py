@@ -4,7 +4,8 @@ class Player():
     def __init__(self, background, x=50, y=50):
         self.cur_dir = pygame.K_RIGHT
 
-        self.snake = setup_snake(background, x, y)
+        self.snake = pygame.draw.rect(background, (0, 0, 0),
+            (x, y, 20, 20), 2)
 
 def check_snake_events(player, event):
     '''
@@ -19,13 +20,6 @@ def check_snake_events(player, event):
             player.cur_dir = event.key
         elif event.key == pygame.K_LEFT:
             player.cur_dir = event.key
-
-def setup_snake(background, initial_x, initial_y):
-    '''
-    Setup the initial state of the player (snake)
-    '''
-    return pygame.draw.rect(background, (0, 0, 0),
-            (initial_x, initial_y, 20, 20), 2)
 
 def update_snake(player, background):
     '''
