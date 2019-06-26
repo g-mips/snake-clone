@@ -2,7 +2,21 @@ import pygame
 import sys
 import getopt
 
+from colors import *
 import player
+
+def setup_borders(screen):
+    width, height = screen.get_size()
+
+    line_1_start = (5, 5)
+    line_2_start = (5, height - 5)
+    line_3_start = (width - 5, height - 5)
+    line_4_start = (width - 5, 5)
+
+    return [pygame.draw.line(screen, WHITE, line_1_start, line_2_start, 5),
+        pygame.draw.line(screen, WHITE, line_2_start, line_3_start, 5),
+        pygame.draw.line(screen, WHITE, line_3_start, line_4_start, 5),
+        pygame.draw.line(screen, WHITE, line_4_start, line_1_start, 5)]
 
 def setup_initial_screen(width, height):
     '''
@@ -37,31 +51,47 @@ def create_surface(size, red, green, blue):
 
     return surface.convert()
 
+def collision_test(plyr, borders):
+    for border in borders:
+        if plyr.snake.colliderect(border):
+            return True
+
+    return False
+
 def main(width, height):
     pygame.init()
-    clock = pygame.time.Clock()
-    FPS = 60
 
+    # Setup clock
+    clock = pygame.time.Clock()
+    FPS = 120
+
+    # Setup screen and objects
     main_screen = pygame.display.set_mode((width, height))
     plyr = player.Player(main_screen)
+    borders = setup_borders(main_screen)
 
+    # Main loop
     running = True
     playtime = 0.0
     while running:
         milliseconds = clock.tick(FPS)
         playtime += milliseconds / 1000.0
 
+        # Debug info
         text = "FPS: {0:.2f} Playtime: {1:.2f}".format(
             clock.get_fps(), playtime)
         pygame.display.set_caption(text)
 
-        if not event_handler(plyr):
-            running = False
+        running = event_handler(plyr)
 
-        main_screen.fill((255, 255, 255))
+        main_screen.fill(BLACK)
 
         player.update_snake(plyr, main_screen)
+        borders = setup_borders(main_screen)
         pygame.display.update()
+
+        if collision_test(plyr, borders):
+            running = False
 
     pygame.quit()
 

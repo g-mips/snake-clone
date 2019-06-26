@@ -1,38 +1,40 @@
 import pygame
 
+from colors import *
+
 class Player():
     def __init__(self, background, x=50, y=50):
         self.cur_dir = pygame.K_RIGHT
 
-        self.snake = pygame.draw.rect(background, (0, 0, 0),
+        self.snake = pygame.draw.rect(background, WHITE,
             (x, y, 20, 20), 2)
 
-def check_snake_events(player, event):
+def check_snake_events(plyr, event):
     '''
     Check all the player (snake) events that could happen
     '''
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_UP:
-            player.cur_dir = event.key
+            plyr.cur_dir = event.key
         elif event.key == pygame.K_DOWN:
-            player.cur_dir = event.key
+            plyr.cur_dir = event.key
         elif event.key == pygame.K_RIGHT:
-            player.cur_dir = event.key
+            plyr.cur_dir = event.key
         elif event.key == pygame.K_LEFT:
-            player.cur_dir = event.key
+            plyr.cur_dir = event.key
 
-def update_snake(player, background):
+def update_snake(plyr, background):
     '''
     Update the state of the snake
     '''
-    if player.cur_dir == pygame.K_LEFT:
-        player.snake.move_ip(-1, 0)
-    elif player.cur_dir == pygame.K_RIGHT:
-        player.snake.move_ip(1, 0)
-    elif player.cur_dir == pygame.K_DOWN:
-        player.snake.move_ip(0, 1)
-    elif player.cur_dir == pygame.K_UP:
-        player.snake.move_ip(0, -1)
+    if plyr.cur_dir == pygame.K_LEFT:
+        plyr.snake.move_ip(-1, 0)
+    elif plyr.cur_dir == pygame.K_RIGHT:
+        plyr.snake.move_ip(1, 0)
+    elif plyr.cur_dir == pygame.K_DOWN:
+        plyr.snake.move_ip(0, 1)
+    elif plyr.cur_dir == pygame.K_UP:
+        plyr.snake.move_ip(0, -1)
 
-    pygame.draw.rect(background, (0, 0, 0),
-            player.snake, 2)
+    pygame.draw.rect(background, WHITE,
+        plyr.snake, 2)
