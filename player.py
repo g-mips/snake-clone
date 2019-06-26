@@ -1,33 +1,29 @@
 import pygame
 
-last_direction = pygame.K_LEFT
-player_keys = { 'LEFT': False, 'RIGHT': False, 'UP': False, 'DOWN': False }
+current_direction = pygame.K_RIGHT
 
 def check_snake_events(event):
+    '''
+    Check all the player (snake) events that could happen
+    '''
+    global current_direction
+
     if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_UP:
-            last_direction = event.key
-            player_keys['UP'] = True
+            current_direction = event.key
         elif event.key == pygame.K_DOWN:
-            last_direction = event.key
-            player_keys['DOWN'] = True
+            current_direction = event.key
         elif event.key == pygame.K_RIGHT:
-            last_direction = event.key
-            player_keys['RIGHT'] = True
+            current_direction = event.key
         elif event.key == pygame.K_LEFT:
-            last_direction = event.key
-            player_keys['LEFT'] = True
-    elif event.type == pygame.KEYUP:
-        if event.key == pygame.K_UP:
-            player_keys['UP'] = False
-        elif event.key == pygame.K_DOWN:
-            player_keys['DOWN'] = False
-        elif event.key == pygame.K_RIGHT:
-            player_keys['RIGHT'] = False
-        elif event.key == pygame.K_LEFT:
-            player_keys['LEFT'] = False
+            current_direction = event.key
 
 def setup_snake(background):
+    '''
+    Setup the initial state of the player (snake)
+    '''
+    global current_direction
+
     initial_x = 50
     initial_y = 50
 
@@ -37,14 +33,14 @@ def setup_snake(background):
 def update_snake(snake, background):
     global player_keys
 
-    if player_keys['UP'] == True:
-        snake.move_ip(0, -1)
-    if player_keys['DOWN'] == True:
-        snake.move_ip(0, 1)
-    if player_keys['LEFT'] == True:
+    if current_direction == pygame.K_LEFT:
         snake.move_ip(-1, 0)
-    if player_keys['RIGHT'] == True:
+    elif current_direction == pygame.K_RIGHT:
         snake.move_ip(1, 0)
+    elif current_direction == pygame.K_DOWN:
+        snake.move_ip(0, 1)
+    elif current_direction == pygame.K_UP:
+        snake.move_ip(0, -1)
 
     pygame.draw.rect(background, (0, 0, 0),
             snake, 2)
