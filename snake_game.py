@@ -79,7 +79,7 @@ def main(width, height):
 
     # Setup clock
     clock = pygame.time.Clock()
-    FPS = 1
+    FPS = 10
 
     # Setup screens
     main_screen = pygame.display.set_mode(
@@ -160,8 +160,8 @@ def usage():
     print('{} [-W <width>] [-H <height>]'.format(sys.argv[0]))
 
 if __name__ == "__main__":
-    width = 1200
-    height = 1200
+    width = 800
+    height = 600
 
     if len(sys.argv) != 1:
         try:
