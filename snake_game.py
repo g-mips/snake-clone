@@ -160,8 +160,8 @@ def usage():
     print('{} [-W <width>] [-H <height>]'.format(sys.argv[0]))
 
 if __name__ == "__main__":
-    width = 800
-    height = 600
+    width = 0
+    height = 0
 
     if len(sys.argv) != 1:
         try:
@@ -177,10 +177,10 @@ if __name__ == "__main__":
                 sys.exit()
             elif opt in ('-d', '--debug'):
                 debug = True
-            #elif opt in ('-W', '--width'):
-            #    width = arg
-            #elif opt in ('-H', '--height'):
-            #    height = arg
+            elif opt in ('-W', '--width'):
+                width = arg
+            elif opt in ('-H', '--height'):
+                height = arg
 
     random.seed()
 
