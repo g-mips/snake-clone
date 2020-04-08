@@ -83,7 +83,7 @@ def main(width, height):
 
     # Setup screens
     main_screen = pygame.display.set_mode(
-        (screen_width, screen_height))#, pygame.FULLSCREEN)
+        (screen_width, screen_height), pygame.FULLSCREEN)
     level_width = int(screen_width / 2)# width - (border_dist * 2)
     level_height = int(screen_height / 2)# height - (border_dist * 2)
     level_sur = create_surface((level_width, level_height), WHITE)
